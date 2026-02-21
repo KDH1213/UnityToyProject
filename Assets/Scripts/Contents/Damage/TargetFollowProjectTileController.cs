@@ -14,40 +14,20 @@ public class TargetFollowProjectTileController : ProjectTileController
     [SerializeField]
     private Transform targetTransform;
 
+    [SerializeField]
+    private float moveTime;
     Vector3 endPoint;
+    private float currentTime;
 
     protected override void Update()
     {
-        if(isTargetFollow)
+        currentTime += GameTimeManager.Instance.DeltaTime;
+        transform.position = Vector3.Lerp(startPos,endPoint , currentTime / moveTime);
+        if(currentTime >= moveTime)
         {
-            if (targetTransform.IsDestroyed())
-            {
-                DisconnectAsTargetDestroy();
-            }
-            else
-            {
-                float distance = Vector3.Distance(targetTransform.position, rigidbody.position);
-
-                if (distance < 5f)
-                {
-                    hitEvent?.Invoke();
-                    Destroy(gameObject);
-                }
-            }
+            hitEvent?.Invoke();
+            Destroy(gameObject);
         }
-        else
-        {
-            if(5f >= Vector3.Distance(endPoint, rigidbody.position))
-                Destroy(gameObject);
-        }       
-    }
-
-    protected override void FixedUpdate()
-    {
-        if (isTargetFollow)
-            rigidbody.MovePosition(Vector3.Normalize(targetTransform.position - rigidbody.position) * Time.fixedDeltaTime* moveSpeed);
-        else
-            rigidbody.MovePosition(rigidbody.position + moveDirection * Time.fixedDeltaTime * moveSpeed);
     }
 
     public void TargetShooting(Transform target,UnityAction _hitEvent = null, UnityAction _destoryEvent = null)

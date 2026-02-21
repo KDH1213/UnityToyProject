@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UIElements;
 
 public class ProjectTile : MonoBehaviour
 {
@@ -18,6 +20,7 @@ public class ProjectTile : MonoBehaviour
     [SerializeField]
     protected UnityEvent destoryEvent;
 
+    private Vector3 startPos;
     private Vector3 endPoint;
 
     [SerializeField]
@@ -31,10 +34,17 @@ public class ProjectTile : MonoBehaviour
 
     private bool isTargetDeath = false;
 
+    [SerializeField]
+    private float moveTime;
+    private float currentTime = 0f;
+
     public void TargetShooting(Transform owner, Transform target, UnityAction _hitEvent = null, UnityAction _destoryEvent = null)
     {
         ownerTransform = owner;
         targetTransform = target;
+
+        startPos = transform.position;
+        endPoint = targetTransform.position;
         targetTransform.GetComponent<IDamageable>().DeathEvent.AddListener(OnTargetDeath);
 
         if(_hitEvent != null)
@@ -77,26 +87,12 @@ public class ProjectTile : MonoBehaviour
 
     private void Move()
     {
-        Vector3 targetPosition;
-
-        if (!isTargetDeath)
+        currentTime += Time.deltaTime;
+        transform.position = Vector3.Lerp(startPos, endPoint, currentTime / moveTime);
+        if (currentTime >= moveTime)
         {
-            moveDirection = Vector3.Normalize(targetTransform.position - transform.position);
-            targetPosition = targetTransform.position;
-        }
-        else
-        {
-            moveDirection = Vector3.Normalize(endPoint - transform.position);
-            targetPosition = endPoint;
-        }
-
-        transform.position += moveDirection * GameTimeManager.Instance.DeltaTime * moveSpeed;
-
-        if (endMovementDistance >= Vector3.Distance(targetPosition, transform.position))
-        {
-            if(!isTargetDeath)
+            if (!isTargetDeath)
                 OnAttackTarget();
-
             Destroy(gameObject);
         }
     }

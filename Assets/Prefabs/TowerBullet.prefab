@@ -132,3 +132,4 @@ MonoBehaviour:
   moveDirection: {x: 0, y: 0, z: 0}
   endMovementDistance: 1
   moveSpeed: 100
+  moveTime: 0.5

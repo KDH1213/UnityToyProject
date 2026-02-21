@@ -167,7 +167,7 @@ public class TowerController : MonoBehaviour
         bool isQuest = false;
         while (!isQuest)
         {
-            yield return new WaitForSeconds(questRange * GameTimeManager.Instance.GameTimeScale);
+            yield return new WaitForEndOfFrame();
             isQuest = OnFindTarget();
         }
 

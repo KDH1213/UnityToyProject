@@ -16,6 +16,7 @@ public class GameTimeManager : Sington<GameTimeManager>
     protected override void Awake()
     {
         base.Awake();
+        Application.targetFrameRate = 144;
 
         gameTimeScale = Time.timeScale;
         Time.fixedDeltaTime = 0.02f * gameTimeScale;
@@ -41,8 +42,8 @@ public class GameTimeManager : Sington<GameTimeManager>
 
     public void SetTimeScale(float timeScale)
     {
-        gameTimeScale = timeScale;
-        Time.fixedDeltaTime = 0.02f * gameTimeScale;
+        Time.timeScale = timeScale;
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
     }
 
     public void ResetTimeScale()
@@ -52,10 +53,12 @@ public class GameTimeManager : Sington<GameTimeManager>
 
     public void OnSpeedUp()
     {
-        SetTimeScale(gameTimeScale * 2f);
+
+       
+        SetTimeScale(Time.timeScale * 2f);
         ++speedUpCount;
 
-        if (speedUpCount >= 3)
+        if (speedUpCount >= 4)
         {
             speedUpCount = 0;
             SetTimeScale(1f);
